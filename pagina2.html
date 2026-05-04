@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Solo para ti 💕</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #04001a;
+      min-height: 100vh;
+      font-family: 'Lato', sans-serif;
+      overflow-x: hidden;
+      color: #fff;
+    }
+
+    /* Fondo animado */
+    #bg-canvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    #stars2 {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .star2 {
+      position: absolute;
+      background: white;
+      border-radius: 50%;
+      animation: twinkle2 var(--dur) ease-in-out infinite;
+    }
+
+    @keyframes twinkle2 {
+      0%, 100% { opacity: var(--op); }
+      50% { opacity: 0.05; }
+    }
+
+    /* Pétalos */
+    #petals2 {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .petal2 {
+      position: absolute;
+      border-radius: 50% 0 50% 0;
+      opacity: 0;
+      animation: fall2 linear infinite;
+    }
+
+    @keyframes fall2 {
+      0%   { transform: translateY(-20px) rotate(0deg); opacity: 0.9; }
+      100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+    }
+
+    /* Contenido principal */
+    #content {
+      position: relative;
+      z-index: 10;
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 60px 24px 80px;
+      text-align: center;
+    }
+
+    /* Intro animada */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      animation: reveal-up 0.9s ease forwards;
+    }
+
+    @keyframes reveal-up {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Corazones flotantes pequeños */
+    #floating-hearts {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      z-index: 3;
+      pointer-events: none;
+    }
+
+    .fheart {
+      position: absolute;
+      font-size: 18px;
+      opacity: 0;
+      animation: float-heart linear infinite;
+    }
+
+    @keyframes float-heart {
+      0%   { transform: translateY(110vh) scale(0.5); opacity: 0; }
+      10%  { opacity: 0.8; }
+      90%  { opacity: 0.5; }
+      100% { transform: translateY(-10vh) scale(1.2); opacity: 0; }
+    }
+
+    /* Logo / ícono superior */
+    #top-icon {
+      font-size: 52px;
+      margin-bottom: 8px;
+      display: block;
+      animation: pulse-heart 1.4s ease-in-out infinite, reveal-up 1s ease forwards;
+      opacity: 0;
+    }
+
+    @keyframes pulse-heart {
+      0%, 100% { transform: scale(1); }
+      50%       { transform: scale(1.12); }
+    }
+
+    #subtitle-top {
+      font-size: 11px;
+      letter-spacing: 5px;
+      color: #ff99cc;
+      text-transform: uppercase;
+      margin-bottom: 40px;
+      animation-delay: 0.2s;
+    }
+
+    /* Título principal */
+    #main-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(32px, 6vw, 54px);
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 12px;
+      background: linear-gradient(135deg, #ff99cc, #ffffff, #ff3388);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation-delay: 0.4s;
+    }
+
+    /* ✏️ CAMBIA "TU NOMBRE AQUÍ" */
+    #nombre-grande {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(38px, 8vw, 72px);
+      font-weight: 700;
+      font-style: italic;
+      color: #fff;
+      text-shadow: 0 0 30px #ff3388, 0 0 60px #ff0055;
+      margin-bottom: 40px;
+      animation: glow-name2 2s ease-in-out infinite alternate;
+      animation-delay: 0.6s;
+      opacity: 0;
+      animation-fill-mode: forwards;
+    }
+
+    @keyframes glow-name2 {
+      from { text-shadow: 0 0 15px #ff3388, 0 0 30px #ff0055; }
+      to   { text-shadow: 0 0 40px #ff88bb, 0 0 70px #ff3388, 0 0 100px #ff0055; }
+    }
+
+    /* Divisor */
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin: 32px auto;
+      max-width: 300px;
+    }
+
+    .divider-line {
+      flex: 1;
+      height: 0.5px;
+      background: linear-gradient(90deg, transparent, #ff3388, transparent);
+    }
+
+    .divider-heart { color: #ff3388; font-size: 14px; }
+
+    /* Cartas / bloques de texto */
+    .carta {
+      background: rgba(255,51,136,0.05);
+      border: 0.5px solid rgba(255,51,136,0.25);
+      border-radius: 16px;
+      padding: 32px 36px;
+      margin-bottom: 24px;
+      text-align: left;
+      position: relative;
+      overflow: hidden;
+      opacity: 0;
+      animation: reveal-up 0.9s ease forwards;
+    }
+
+    .carta::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 3px; height: 100%;
+      background: linear-gradient(180deg, #ff3388, #ff0055);
+    }
+
+    .carta-numero {
+      font-size: 11px;
+      letter-spacing: 3px;
+      color: #ff99cc;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+      opacity: 0.7;
+    }
+
+    .carta-texto {
+      font-family: 'Playfair Display', serif;
+      font-size: 17px;
+      font-style: italic;
+      line-height: 1.9;
+      color: #ffe0ee;
+    }
+
+    /* Frase grande central */
+    .frase-grande {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(22px, 4vw, 34px);
+      font-style: italic;
+      color: #fff;
+      line-height: 1.7;
+      text-shadow: 0 0 20px rgba(255,51,136,0.4);
+      padding: 20px 0;
+      opacity: 0;
+      animation: reveal-up 0.9s ease forwards;
+    }
+
+    /* Contador */
+    #contador-section {
+      margin: 40px 0;
+      opacity: 0;
+      animation: reveal-up 0.9s ease forwards;
+    }
+
+    #contador-label {
+      font-size: 11px;
+      letter-spacing: 4px;
+      color: #ff99cc;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+
+    #contador-numeros {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .cnt-bloque {
+      background: rgba(255,51,136,0.08);
+      border: 0.5px solid rgba(255,51,136,0.3);
+      border-radius: 12px;
+      padding: 16px 22px;
+      min-width: 80px;
+    }
+
+    .cnt-num {
+      font-size: 30px;
+      font-weight: 700;
+      color: #fff;
+      text-shadow: 0 0 15px #ff3388;
+      display: block;
+    }
+
+    .cnt-lbl {
+      font-size: 10px;
+      letter-spacing: 2px;
+      color: #ff99cc;
+      text-transform: uppercase;
+      margin-top: 4px;
+      display: block;
+    }
+
+    /* Firma final */
+    #firma {
+      margin-top: 50px;
+      opacity: 0;
+      animation: reveal-up 0.9s ease forwards;
+    }
+
+    #firma-texto {
+      font-family: 'Playfair Display', serif;
+      font-size: 14px;
+      color: #ff99cc;
+      letter-spacing: 2px;
+      margin-bottom: 8px;
+      font-style: italic;
+    }
+
+    /* ✏️ CAMBIA "Tu nombre" por tu nombre */
+    #firma-nombre {
+      font-family: 'Playfair Display', serif;
+      font-size: 28px;
+      font-style: italic;
+      color: #fff;
+      text-shadow: 0 0 20px #ff3388;
+    }
+
+    /* Botón volver */
+    #btn-volver {
+      display: inline-block;
+      margin-top: 40px;
+      padding: 12px 36px;
+      font-size: 12px;
+      font-family: 'Lato', sans-serif;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: rgba(255,153,204,0.7);
+      background: transparent;
+      border: 0.5px solid rgba(255,51,136,0.3);
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-decoration: none;
+    }
+
+    #btn-volver:hover {
+      color: #ff99cc;
+      border-color: #ff3388;
+      box-shadow: 0 0 20px rgba(255,51,136,0.3);
+    }
+
+    /* Player YouTube oculto */
+    #yt-frame {
+      position: fixed;
+      bottom: -300px;
+      left: -300px;
+      width: 1px; height: 1px;
+      opacity: 0;
+      pointer-events: none;
+      border: none;
+    }
+
+    /* Notificación música */
+    #music-notif {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 50;
+      background: rgba(26,0,48,0.9);
+      border: 0.5px solid rgba(255,51,136,0.4);
+      border-radius: 50px;
+      padding: 10px 20px;
+      font-size: 12px;
+      color: #ff99cc;
+      letter-spacing: 1px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: all 0.3s;
+      backdrop-filter: blur(8px);
+    }
+
+    #music-notif:hover { box-shadow: 0 0 20px rgba(255,51,136,0.4); }
+
+    .music-dot {
+      width: 8px; height: 8px;
+      background: #ff3388;
+      border-radius: 50%;
+      animation: blink-dot 1s ease-in-out infinite;
+    }
+
+    @keyframes blink-dot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.3; transform: scale(0.6); }
+    }
+  </style>
+</head>
+<body>
+
+  <canvas id="bg-canvas"></canvas>
+  <div id="stars2"></div>
+  <div id="petals2"></div>
+  <div id="floating-hearts"></div>
+
+  <!-- Audio local -->
+  <audio id="mi-audio" loop>
+    <source src="cancion.mp3" type="audio/mpeg">
+  </audio>
+
+  <!-- Notificación música -->
+  <div id="music-notif" onclick="toggleMusic()" style="display:none">
+    <span class="music-dot"></span>
+    <span id="music-label">♫ Reproduciendo música</span>
+  </div>
+
+  <!-- Pantalla de bienvenida -->
+  <div id="welcome-screen" style="
+    position:fixed;top:0;left:0;width:100%;height:100%;
+    background:#04001a;z-index:999;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;padding:24px;
+  ">
+    <div style="font-size:64px;animation:pulse-heart 1.4s ease-in-out infinite;margin-bottom:24px;">💕</div>
+    <div style="font-family:'Playfair Display',serif;font-size:clamp(20px,4vw,32px);color:#fff;margin-bottom:12px;text-shadow:0 0 20px #ff3388;">
+      Hay algo especial para ti
+    </div>
+    <div style="font-size:13px;letter-spacing:3px;color:#ff99cc;text-transform:uppercase;margin-bottom:40px;opacity:0.8;">
+      presiona para continuar
+    </div>
+    <button onclick="entrarConMusica()" style="
+      padding:16px 52px;font-size:15px;
+      font-family:'Georgia',serif;letter-spacing:3px;
+      text-transform:uppercase;color:#fff;
+      background:linear-gradient(135deg,#ff0055,#cc0044);
+      border:none;border-radius:50px;cursor:pointer;
+      box-shadow:0 4px 30px rgba(255,0,85,0.5);
+      transition:all 0.3s;
+    " onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+      Abrir ❤
+    </button>
+  </div>
+
+  <div id="content">
+
+    <span id="top-icon" class="reveal">💕</span>
+    <div id="subtitle-top" class="reveal">una sorpresa solo para ti</div>
+
+    <div id="main-title" class="reveal">
+      Para la persona que<br>ilumina mi mundo,
+    </div>
+
+    <!-- ✏️ CAMBIA "TU NOMBRE AQUÍ" -->
+    <div id="nombre-grande">TU NOMBRE AQUÍ</div>
+
+    <div class="divider reveal" style="animation-delay:0.8s">
+      <div class="divider-line"></div>
+      <span class="divider-heart">♥</span>
+      <div class="divider-line"></div>
+    </div>
+
+    <!-- ✏️ PERSONALIZA los mensajes de cada carta -->
+    <div class="carta" style="animation-delay:1s">
+      <div class="carta-numero">✦ Razón uno</div>
+      <div class="carta-texto">
+        "Desde que llegaste a mi vida, cada mañana tiene más sentido.
+        Tu sonrisa es lo primero que quiero ver y lo último en lo que pienso antes de dormir."
+      </div>
+    </div>
+
+    <div class="frase-grande" style="animation-delay:1.3s">
+      "Eres el hogar que siempre estuve buscando."
+    </div>
+
+    <div class="carta" style="animation-delay:1.5s">
+      <div class="carta-numero">✦ Razón dos</div>
+      <div class="carta-texto">
+        "Me enamoro de ti todos los días. De tu forma de reír, de cómo me miras,
+        de tu manera única de hacer que todo se sienta bien."
+      </div>
+    </div>
+
+    <div class="carta" style="animation-delay:1.8s">
+      <div class="carta-numero">✦ Razón tres</div>
+      <div class="carta-texto">
+        "Prometo estar ahí para ti siempre. En los días de sol y en los días de tormenta,
+        porque contigo cualquier momento se convierte en el mejor recuerdo."
+      </div>
+    </div>
+
+    <div class="frase-grande" style="animation-delay:2s">
+      "Te amo hoy, mañana<br>y todos los días que me queden."
+    </div>
+
+    <!-- Contador de días juntos -->
+    <div id="contador-section" style="animation-delay:2.2s">
+      <div id="contador-label">Llevamos juntos</div>
+      <div id="contador-numeros">
+        <div class="cnt-bloque">
+          <span class="cnt-num" id="cnt-dias">0</span>
+          <span class="cnt-lbl">días</span>
+        </div>
+        <div class="cnt-bloque">
+          <span class="cnt-num" id="cnt-horas">0</span>
+          <span class="cnt-lbl">horas</span>
+        </div>
+        <div class="cnt-bloque">
+          <span class="cnt-num" id="cnt-min">0</span>
+          <span class="cnt-lbl">minutos</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider reveal" style="animation-delay:2.4s">
+      <div class="divider-line"></div>
+      <span class="divider-heart">♥</span>
+      <div class="divider-line"></div>
+    </div>
+
+    <div id="firma" style="animation-delay:2.6s">
+      <div id="firma-texto">Con todo mi amor,</div>
+      <!-- ✏️ CAMBIA "Tu nombre" por tu nombre -->
+      <div id="firma-nombre">Tu nombre</div>
+    </div>
+
+    <!-- ✏️ Cambia "pagina1.html" si renombraste el primer archivo -->
+    <a href="pagina1.html" id="btn-volver">← volver al inicio</a>
+
+  </div>
+
+  <script>
+    // ============================================================
+    // ✏️ CAMBIA esta fecha por la fecha en que empezaron su relación
+    // Formato: año, mes-1, día  (ej: 15 de marzo 2023 → 2023, 2, 15)
+    const FECHA_INICIO = new Date(2024, 0, 1);
+    // ============================================================
+
+    // Estrellas fondo
+    const s2 = document.getElementById('stars2');
+    for (let i = 0; i < 120; i++) {
+      const s = document.createElement('div');
+      s.className = 'star2';
+      const sz = 1 + Math.random() * 2.5;
+      s.style.cssText = `left:${Math.random()*100}%;top:${Math.random()*100}%;width:${sz}px;height:${sz}px;--dur:${1.5+Math.random()*4}s;--op:${0.2+Math.random()*0.6};animation-delay:${Math.random()*4}s`;
+      s2.appendChild(s);
+    }
+
+    // Pétalos fondo
+    const p2 = document.getElementById('petals2');
+    const pColors = ['#ff3399','#ff66aa','#ff99cc','#ffccdd','#cc0044','#aa0033'];
+    for (let i = 0; i < 30; i++) {
+      const p = document.createElement('div');
+      p.className = 'petal2';
+      const sz = 5 + Math.random() * 10;
+      p.style.cssText = `left:${Math.random()*100}%;background:${pColors[Math.floor(Math.random()*pColors.length)]};width:${sz}px;height:${sz}px;animation-duration:${5+Math.random()*8}s;animation-delay:${Math.random()*12}s`;
+      p2.appendChild(p);
+    }
+
+    // Corazones flotantes
+    const fh = document.getElementById('floating-hearts');
+    const heartSymbols = ['❤', '💕', '💗', '💖', '💝', '♥'];
+    for (let i = 0; i < 12; i++) {
+      const h = document.createElement('div');
+      h.className = 'fheart';
+      h.textContent = heartSymbols[Math.floor(Math.random()*heartSymbols.length)];
+      h.style.cssText = `left:${Math.random()*100}%;animation-duration:${8+Math.random()*10}s;animation-delay:${Math.random()*15}s;font-size:${12+Math.random()*16}px`;
+      fh.appendChild(h);
+    }
+
+    // Canvas fondo aurora
+    const bgCanvas = document.getElementById('bg-canvas');
+    const bgCtx = bgCanvas.getContext('2d');
+    let bW, bH, auroraT = 0;
+    function resizeBg() { bW = bgCanvas.width = window.innerWidth; bH = bgCanvas.height = window.innerHeight; }
+    resizeBg();
+    window.addEventListener('resize', resizeBg);
+
+    function drawAurora() {
+      bgCtx.clearRect(0,0,bW,bH);
+      bgCtx.fillStyle = '#04001a';
+      bgCtx.fillRect(0,0,bW,bH);
+      for (let i = 0; i < 4; i++) {
+        const x = bW * (0.2 + 0.6*(i/3));
+        const y = bH * (0.3 + 0.15*Math.sin(auroraT*0.4 + i*1.2));
+        const r = bW * (0.3 + 0.1*Math.sin(auroraT*0.3 + i));
+        const g = bgCtx.createRadialGradient(x,y,0,x,y,r);
+        const hue = 310 + i*15 + 10*Math.sin(auroraT*0.2);
+        g.addColorStop(0, `hsla(${hue},100%,30%,0.12)`);
+        g.addColorStop(1, 'transparent');
+        bgCtx.fillStyle = g;
+        bgCtx.beginPath();
+        bgCtx.ellipse(x, y, r, r*0.5, auroraT*0.1+i, 0, Math.PI*2);
+        bgCtx.fill();
+      }
+      auroraT += 0.015;
+      requestAnimationFrame(drawAurora);
+    }
+    drawAurora();
+
+    // Contador
+    function updateContador() {
+      const now = new Date();
+      const diff = now - FECHA_INICIO;
+      const dias  = Math.floor(diff / 86400000);
+      const horas = Math.floor((diff % 86400000) / 3600000);
+      const mins  = Math.floor((diff % 3600000) / 60000);
+      document.getElementById('cnt-dias').textContent  = dias;
+      document.getElementById('cnt-horas').textContent = horas;
+      document.getElementById('cnt-min').textContent   = mins;
+    }
+    updateContador();
+    setInterval(updateContador, 60000);
+
+    // Audio local MP3
+    let musicActiva = false;
+    const audio = document.getElementById('mi-audio');
+
+    window.entrarConMusica = function() {
+      const ws = document.getElementById('welcome-screen');
+      ws.style.transition = 'opacity 0.8s';
+      ws.style.opacity = '0';
+      setTimeout(() => { ws.style.display = 'none'; }, 800);
+      audio.volume = 0.6;
+      audio.play();
+      musicActiva = true;
+      document.getElementById('music-notif').style.display = 'flex';
+    };
+
+    window.toggleMusic = function() {
+      const lbl = document.getElementById('music-label');
+      if (musicActiva) {
+        audio.pause();
+        musicActiva = false;
+        lbl.textContent = '♪ Música pausada';
+      } else {
+        audio.play();
+        musicActiva = true;
+        lbl.textContent = '♫ Reproduciendo música';
+      }
+    };
+  </script>
+</body>
+</html>
